@@ -1,5 +1,5 @@
 import Foundation
 
-struct Player: Codable {
+struct Player: Codable, Equatable {
     let name: String
 }

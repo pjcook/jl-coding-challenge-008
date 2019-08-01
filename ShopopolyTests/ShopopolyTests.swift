@@ -1,11 +1,3 @@
-//
-//  ShopopolyTests.swift
-//  ShopopolyTests
-//
-//  Created by PJ COOK on 05/07/2019.
-//  Copyright © 2019 Software101. All rights reserved.
-//
-
 import XCTest
 @testable import Shopopoly
 

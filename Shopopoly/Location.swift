@@ -1,17 +1,89 @@
 import Foundation
 
-enum Location: Equatable {
-    case freeParking
-    case go(fee: Double)
-    case warehouse(name: String, purchasePrice: Double, rent: Double)
-    case retail(name: String, purchasePrice: Double, rent: Double, shopPurchasePrice: Double, group: RetailGroup)
+enum RetailType: Int, Codable, CaseIterable {
+    case none, ministore, supermarket, megastore
+    
+    var canUpgrade: Bool {
+        return self != .megastore
+    }
+    
+    func upgradedValue() -> RetailType {
+        return RetailType(rawValue: self.rawValue + 1) ?? .megastore
+    }
 }
 
+enum Location: Equatable {
+    enum Errors: Error {
+        case cannotPurchase
+        case cannotUpgrade
+    }
+
+    case freeParking
+    case go(fee: Money)
+    case warehouse(name: String, purchasePrice: Money, rent: Money)
+    case retail(name: String, purchasePrice: Money, rent: Money, upgradePrice: Money)
+}
+
+// MARK: - additional logic
+extension Location {
+    var passingFee: Money? {
+        switch self {
+        case .go(let fee):
+            return fee
+        default: return nil
+        }
+    }
+    
+    var rent: Money? {
+        switch self {
+        case .freeParking, .go:
+            return nil
+        case .warehouse(_, _, let rent):
+            return rent
+        case .retail(_, _, let rent, _):
+            return rent
+        }
+    }
+    
+    var canPurchase: Bool {
+        switch self {
+        case .warehouse, .retail: return true
+        default: return false
+        }
+    }
+    
+    func purchasePrice() throws -> Money {
+        switch self {
+        case .warehouse(_, let purchasePrice, _):
+            return purchasePrice
+        case .retail(_, let purchasePrice, _, _):
+            return purchasePrice
+        default: throw Errors.cannotPurchase
+        }
+    }
+    
+    var isRetail: Bool {
+        switch self {
+        case .retail: return true
+        default: return false
+        }
+    }
+    
+    func upgradeFee() throws -> Money {
+        switch self {
+        case .retail(_, _, _, let upgradePrice):
+            return upgradePrice
+        default: throw Errors.cannotUpgrade
+        }
+    }
+}
+
+// MARK: - Codable
 extension Location: Codable {
     enum CodingKeys: String, CodingKey {
         case locationOption
         case fee
-        case name, purchasePrice, rent, shopPurchasePrice, group
+        case name, purchasePrice, rent, upgradePrice
     }
     
     private enum LocationOption: String, Codable {
@@ -27,20 +99,19 @@ extension Location: Codable {
         case .freeParking:
             self = .freeParking
         case .go:
-            let fee = try container.decode(Double.self, forKey: .fee)
+            let fee = try container.decode(Money.self, forKey: .fee)
             self = .go(fee: fee)
         case .warehouse:
             let name = try container.decode(String.self, forKey: .name)
-            let purchasePrice = try container.decode(Double.self, forKey: .purchasePrice)
-            let rent = try container.decode(Double.self, forKey: .rent)
+            let purchasePrice = try container.decode(Money.self, forKey: .purchasePrice)
+            let rent = try container.decode(Money.self, forKey: .rent)
             self = .warehouse(name: name, purchasePrice: purchasePrice, rent: rent)
         case .retail:
             let name = try container.decode(String.self, forKey: .name)
-            let purchasePrice = try container.decode(Double.self, forKey: .purchasePrice)
-            let rent = try container.decode(Double.self, forKey: .rent)
-            let shopPurchasePrice = try container.decode(Double.self, forKey: .shopPurchasePrice)
-            let group = try container.decode(RetailGroup.self, forKey: .group)
-            self = .retail(name: name, purchasePrice: purchasePrice, rent: rent, shopPurchasePrice: shopPurchasePrice, group: group)
+            let purchasePrice = try container.decode(Money.self, forKey: .purchasePrice)
+            let rent = try container.decode(Money.self, forKey: .rent)
+            let upgradePrice = try container.decode(Money.self, forKey: .upgradePrice)
+            self = .retail(name: name, purchasePrice: purchasePrice, rent: rent, upgradePrice: upgradePrice)
         }
     }
     
@@ -54,17 +125,16 @@ extension Location: Codable {
             try container.encode(LocationOption.go, forKey: .locationOption)
             try container.encode(fee, forKey: .fee)
         case let .warehouse(name: name, purchasePrice: purchasePrice, rent: rent):
-            try container.encode(LocationOption.go, forKey: .locationOption)
+            try container.encode(LocationOption.warehouse, forKey: .locationOption)
             try container.encode(name, forKey: .name)
             try container.encode(purchasePrice, forKey: .purchasePrice)
             try container.encode(rent, forKey: .rent)
-        case let .retail(name: name, purchasePrice: purchasePrice, rent: rent, shopPurchasePrice: shopPurchasePrice, group: group):
-            try container.encode(LocationOption.go, forKey: .locationOption)
+        case let .retail(name: name, purchasePrice: purchasePrice, rent: rent, upgradePrice: upgradePrice):
+            try container.encode(LocationOption.retail, forKey: .locationOption)
             try container.encode(name, forKey: .name)
             try container.encode(purchasePrice, forKey: .purchasePrice)
             try container.encode(rent, forKey: .rent)
-            try container.encode(shopPurchasePrice, forKey: .shopPurchasePrice)
-            try container.encode(group, forKey: .group)
+            try container.encode(upgradePrice, forKey: .upgradePrice)
         }
     }
 }
