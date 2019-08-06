@@ -14,6 +14,7 @@ struct GameLedger: Codable {
     private struct PlayerData: Codable {
         let player: Player
         var money: Money
+        var boardLocation: Int
     }
     
     private struct LocationData: Codable {
@@ -37,10 +38,12 @@ struct GameLedger: Codable {
     private var playerData: [PlayerData]
     private var locationData: [LocationData]
     private var transactions: [Transaction]
+    private let dice: [Dice]
     
-    init(players: [Player], locations: [Location]) {
+    init(players: [Player], locations: [Location], dice: [Dice]) {
+        self.dice = dice
         playerData = players.map {
-            PlayerData(player: $0, money: 0)
+            PlayerData(player: $0, money: 0, boardLocation: 0)
         }
         
         locationData = locations.map {
@@ -53,6 +56,27 @@ struct GameLedger: Codable {
 
 // MARK: - Public Functions
 extension GameLedger {
+    /// The game of Shopopoly requires the player to shake two 6 sided dice and move forward by the total number of the two dice. The Dice data type contains two integer values between one and six, one for each dice. The two values are generated randomly when an instance of Dice is created.
+    
+    /// To enable a player to move a function needs to be created that adds the Dice to the boardLocation to create a new boardLocation for the player. Locations are organised in a loop so when you move past the last Location, you move onto the first Location.
+    ///
+    /// - Parameter player: The player currently moving
+    /// - Returns: The values from each Die rolled, the location the player lands on, whether the player passed GO or not
+    mutating func move(_ player: Player) throws -> ([Int], Location, Bool) {
+        let playerIndex = try indexOf(player: player)
+        var data = playerData[playerIndex]
+        let rolls = dice.map { $0.roll() }
+        let startIndex = data.boardLocation
+        var endIndex = startIndex + rolls.reduce(0) { $0 + $1 }
+        if endIndex > locationData.count - 1 {
+            endIndex = endIndex % locationData.count
+        }
+        data.boardLocation = endIndex
+        playerData[playerIndex] = data
+        
+        return (rolls, locationData[endIndex].location, hasPassedGo(startIndex, endIndex))
+    }
+    
     /// A function that adds a transaction for an amount being transferred from the Bank to a Player. This is the starting balance for each player in the game.
     /// - Parameter value: starting balance of each player
     mutating func startGame(value: Money) throws {
@@ -90,6 +114,30 @@ extension GameLedger {
 
 // MARK: - Private Functions
 extension GameLedger {
+    /// To detect whether a player has passed go (i.e. landed on the go square or passed over it) a function needs to be created that accepts two boardLocations as input and returns true if the player has passed go. Please assume the board has at least 13 Locations on it so you can’t pass through go more than once in one move.
+    ///
+    /// - Parameters:
+    ///   - startIndex: Players start location index
+    ///   - endIndex: Players end location index
+    /// - Returns: Whether the player passed GO or not
+    private mutating func hasPassedGo(_ startIndex: Int, _ endIndex: Int) -> Bool {
+        var hasPassedGO = false
+        var indices: FlattenSequence<[Range<Int>]>
+        if startIndex < endIndex {
+            indices = [(startIndex+1..<endIndex)].joined()
+        } else {
+            indices = [(startIndex+1..<locationData.count), (0..<endIndex)].joined()
+        }
+
+        for i in indices {
+            if case .go = locationData[i].location {
+                hasPassedGO = true
+                break
+            }
+        }
+        return hasPassedGO
+    }
+    
     private mutating func process(_ transaction: Transaction) throws {
         transactions.append(transaction)
         
@@ -172,7 +220,7 @@ extension GameLedger.Transaction: Codable {
     enum CodingKeys: String, CodingKey {
         case transactionOption
         case value
-        case player, location
+        case player, location, dice
     }
     
     private enum TransactionOption: String, Codable {

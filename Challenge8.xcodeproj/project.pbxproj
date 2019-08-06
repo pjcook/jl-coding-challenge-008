@@ -13,6 +13,8 @@
 		D54E41F822F30575005A1684 /* RetailTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E41F722F30575005A1684 /* RetailTypeTests.swift */; };
 		D54E41FA22F30F65005A1684 /* GameLedgerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E41F922F30F65005A1684 /* GameLedgerTests.swift */; };
 		D54E41FC22F31A98005A1684 /* CodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E41FB22F31A98005A1684 /* CodableTests.swift */; };
+		D5BAD0F922F9CA57002F9623 /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BAD0F822F9CA57002F9623 /* Dice.swift */; };
+		D5BAD0FB22F9CADD002F9623 /* DiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BAD0FA22F9CADD002F9623 /* DiceTests.swift */; };
 		D5BE76D722CF90DE00C7F61C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BE76D622CF90DE00C7F61C /* AppDelegate.swift */; };
 		D5BE76D922CF90DE00C7F61C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BE76D822CF90DE00C7F61C /* ViewController.swift */; };
 		D5BE76DC22CF90DE00C7F61C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5BE76DA22CF90DE00C7F61C /* Main.storyboard */; };
@@ -88,6 +90,8 @@
 		D54E41F722F30575005A1684 /* RetailTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailTypeTests.swift; sourceTree = "<group>"; };
 		D54E41F922F30F65005A1684 /* GameLedgerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLedgerTests.swift; sourceTree = "<group>"; };
 		D54E41FB22F31A98005A1684 /* CodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableTests.swift; sourceTree = "<group>"; };
+		D5BAD0F822F9CA57002F9623 /* Dice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
+		D5BAD0FA22F9CADD002F9623 /* DiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceTests.swift; sourceTree = "<group>"; };
 		D5BE76D322CF90DE00C7F61C /* Challenge8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Challenge8.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5BE76D622CF90DE00C7F61C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D5BE76D822CF90DE00C7F61C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -217,6 +221,7 @@
 				D5BE772922CF922C00C7F61C /* Location.swift */,
 				D5BE770E22CF920E00C7F61C /* Info.plist */,
 				D5BE770D22CF920E00C7F61C /* Shopopoly.h */,
+				D5BAD0F822F9CA57002F9623 /* Dice.swift */,
 			);
 			path = Shopopoly;
 			sourceTree = "<group>";
@@ -231,6 +236,7 @@
 				D54E41F722F30575005A1684 /* RetailTypeTests.swift */,
 				D54E41F922F30F65005A1684 /* GameLedgerTests.swift */,
 				D54E41FB22F31A98005A1684 /* CodableTests.swift */,
+				D5BAD0FA22F9CADD002F9623 /* DiceTests.swift */,
 			);
 			path = ShopopolyTests;
 			sourceTree = "<group>";
@@ -467,6 +473,7 @@
 			files = (
 				2E042EB922F2B7A900031F19 /* GameLedger.swift in Sources */,
 				D5BE772A22CF922C00C7F61C /* Location.swift in Sources */,
+				D5BAD0F922F9CA57002F9623 /* Dice.swift in Sources */,
 				D5BE773222CFAABA00C7F61C /* Player.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -476,6 +483,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D54E41FA22F30F65005A1684 /* GameLedgerTests.swift in Sources */,
+				D5BAD0FB22F9CADD002F9623 /* DiceTests.swift in Sources */,
 				D54E41F422F304E4005A1684 /* PlayerTests.swift in Sources */,
 				D54E41FC22F31A98005A1684 /* CodableTests.swift in Sources */,
 				D54E41F622F30553005A1684 /* LocationTests.swift in Sources */,

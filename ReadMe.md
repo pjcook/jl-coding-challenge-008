@@ -35,9 +35,9 @@ Had another question about Challenge 8. The Location data type doesn't need to h
 
 # Challenge #9
 
-In challenge 8 we created a Location data structure which represented each of the different types of locations found on a new game called “Shopopoly”.
+In `challenge 8` we created a Location data structure which represented each of the different types of locations found on a new game called “Shopopoly”.
 
-In Shopopoly it will be important to know things such as how much money each player has, who owns each location and whether any location has been developed to add a ministore, a supermarket or a megastore. The objective of challenge-9 will be to create a GameLedger which will hold a record of all financial transactions in the game. There will be a single instance of GameLedger that will be initialised at the start of each game.
+In Shopopoly it will be important to know things such as how much money each player has, who owns each location and whether any location has been developed to add a ministore, a supermarket or a megastore. The objective of challenge-9 will be to create a `GameLedger` which will hold a record of all financial transactions in the game. There will be a single instance of GameLedger that will be initialised at the start of each game.
 
 You are also required to create the following functions that add transactions to the GameLedger:
 
@@ -51,7 +51,7 @@ You are also required to create the following functions that add transactions to
 
   * A function that adds a transaction for when a Player has paid the Bank for building a specific type of building on a Location. Types of building include ministore, supermarket or megastore.
 
-We haven’t defined Player yet so for this challenge just create a simple type (e.g. a class or interface) that contains a property that uniquely identify each instance of a player.
+We haven’t defined `Player` yet so for this challenge just create a simple type (e.g. a class or interface) that contains a property that uniquely identify each instance of a player.
 
 To keep this simple please assume the following about GameLedger:
 
@@ -69,4 +69,27 @@ To keep this simple please assume the following about GameLedger:
 
   * You don’t need to worry about concurrency.
 
-Entries should be submitted by 5th August.
+
+# Challenge #10
+
+In `challenge 8` and `challenge 9` we created a data structure that represented the type of Locations on our Shopopoly board and a GameLedger which keeps a record of all financial transactions that happen in a game of Shopopuly.
+
+In this challenge you are required to create the `Player` data type and the `Dice` data type.
+
+Each Player data type will have two properties:
+
+ * `name` - this is just a 30 character string.
+
+ * `boardLocation` - the data type of this property is up to you. You must be able to use it to determine the `Location` that the player is situated on.
+
+The game of Shopopoly requires the player to shake two 6 sided dice and move forward by the total number of the two dice. The Dice data type contains two integer values between one and six, one for each dice. The two values are generated randomly when an instance of Dice is created.
+
+To enable a player to move a function needs to be created that adds the Dice to the boardLocation to create a new boardLocation for the player. Locations are organised in a loop so when you move past the last Location, you move onto the first Location.
+
+To detect whether a player has passed go (i.e. landed on the go square or passed over it) a function needs to be created that accepts two boardLocations as input and returns true if the player has passed go. Please assume the board has at least 13 Locations on it so you can’t pass through go more than once in one move.
+
+## Some tips:
+
+You don’t need to have completed Challenge 8 or Challenge 9 to complete this challenge. The Location data type can just be a simple class or interface but you may need a way to detect whether a location is the location for the go square so you can work out when someone passes go.
+
+You will probably need to create a mechanism for determining the sequence of each location on the board.
