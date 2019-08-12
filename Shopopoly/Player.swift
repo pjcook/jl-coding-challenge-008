@@ -1,6 +1,6 @@
 import Foundation
 
-struct Player: Codable, Equatable {
+public struct Player: Codable, Equatable {
     static let maxNameLength = 30
     
     enum Errors: Error {
@@ -8,9 +8,9 @@ struct Player: Codable, Equatable {
         case blankName
     }
     
-    let name: String
+    public let name: String
     
-    init(name: String) throws {
+    public init(name: String) throws {
         self.name = name
         try validateName(name)
     }

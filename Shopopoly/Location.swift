@@ -1,6 +1,6 @@
 import Foundation
 
-enum RetailType: Int, Codable, CaseIterable {
+public enum RetailType: Int, Codable, CaseIterable {
     case none, ministore, supermarket, megastore
     
     var canUpgrade: Bool {
@@ -12,7 +12,7 @@ enum RetailType: Int, Codable, CaseIterable {
     }
 }
 
-enum Location: Equatable {
+public enum Location: Equatable {
     enum Errors: Error {
         case cannotPurchase
         case cannotUpgrade
@@ -30,7 +30,21 @@ enum Location: Equatable {
 }
 
 // MARK: - additional logic
-extension Location {
+public extension Location {
+    var name: String {
+        switch self {
+        case .chance: return "Chance"
+        case .communityChest: return "Community Chest"
+        case .freeParking: return "Free Parking"
+        case .go: return "GO"
+        case .goToJail: return "Go to Jail"
+        case .jail: return "Jail"
+        case .incomeTax(let name, _): return name
+        case .retail(let name, let purchasePrice, _, _): return "\(name) cost: \(purchasePrice)"
+        case .warehouse(let name, let purchasePrice, _): return "\(name) cost: \(purchasePrice)"
+        }
+    }
+    
     var passingFee: Money? {
         switch self {
         case .go(let fee):
@@ -95,7 +109,7 @@ extension Location: Codable {
         case freeParking, go, warehouse, retail, chance, communityChest, jail, goToJail, incomeTax
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let locationOption = try container.decode(LocationOption.self, forKey: .locationOption)
@@ -140,7 +154,7 @@ extension Location: Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {

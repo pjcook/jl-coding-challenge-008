@@ -193,7 +193,21 @@ class GameLedgerTests: XCTestCase {
         XCTAssertThrowsError(try ledger.upgrade(player: player1, location: location))
     }
     
-    // MARK: - mvoe tests
+    // MARK: - get players
+    
+    func test_get_players() {
+        let player1 = try! Player(name: "Bob")
+        let player2 = try! Player(name: "Steve")
+        let players = [player1, player2]
+        let ledger = GameLedger(players: players, locations: [Location.testRetail], dice: [Dice(numberOfSides: 6)])
+        
+        let ledgerPlayers = ledger.getPlayers()
+        XCTAssertEqual(players.count, ledgerPlayers.count)
+        XCTAssertTrue(ledgerPlayers.contains(player1))
+        XCTAssertTrue(ledgerPlayers.contains(player2))
+    }
+    
+    // MARK: - move tests
     func test_simple_game_move() {
         let player1 = try! Player(name: "Bob")
         let player2 = try! Player(name: "Steve")
@@ -201,7 +215,7 @@ class GameLedgerTests: XCTestCase {
         let locations = GameLedger.testDefaultLocations()
         var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 6), Dice(numberOfSides: 6)])
 
-        let result = try! ledger.move(player1)
+        let result = try! ledger.moveCurrentPlayer()
         XCTAssertEqual(2, result.0.count)
         XCTAssertFalse(result.2)
         XCTAssertTrue((1...6).contains(result.0[0]))
@@ -210,19 +224,20 @@ class GameLedgerTests: XCTestCase {
     
     func test_move_hasPassedGo() {
         let player1 = try! Player(name: "Bob")
-        let player2 = try! Player(name: "Steve")
-        let players = [player1, player2]
+        let players = [player1]
         let locations = GameLedger.testDefaultLocations()
         var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 6), Dice(numberOfSides: 6)])
         
         var didPassGO = false
         var spacesMoved = 0
-        var result = try! ledger.move(player1)
+        var result = try! ledger.moveCurrentPlayer()
+        ledger.endTurn()
         didPassGO = result.2
         spacesMoved += result.0.reduce(0) { $0 + $1 }
         
         while !didPassGO {
-            result = try! ledger.move(player1)
+            result = try! ledger.moveCurrentPlayer()
+            ledger.endTurn()
             didPassGO = result.2
             spacesMoved += result.0.reduce(0) { $0 + $1 }
         }
@@ -232,14 +247,133 @@ class GameLedgerTests: XCTestCase {
     }
     
     func test_game_move_invalid_player() {
+        let locations = GameLedger.testDefaultLocations()
+        var ledger = GameLedger(players: [], locations: locations, dice: [Dice(numberOfSides: 6), Dice(numberOfSides: 6)])
+        
+        XCTAssertThrowsError(try ledger.moveCurrentPlayer())
+    }
+    
+    func test_game_move_land_on_opponents_purchased_property() {
         let player1 = try! Player(name: "Bob")
         let player2 = try! Player(name: "Steve")
-        let player3 = try! Player(name: "Rachel")
         let players = [player1, player2]
         let locations = GameLedger.testDefaultLocations()
-        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 6), Dice(numberOfSides: 6)])
+        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 1)])
         
-        XCTAssertThrowsError(try ledger.move(player3))
+        try! ledger.startGame(value: 1500)
+        var result = try! ledger.moveCurrentPlayer()
+        try! ledger.purchase(player: player1, location: result.1)
+        guard let purchasedLocation = ledger.getLocationData().first(where: { $0.location == result.1 }) else { return XCTFail() }
+        XCTAssertEqual(player1, purchasedLocation.owner)
+        
+        ledger.endTurn()
+        result = try! ledger.moveCurrentPlayer()
+        
+        let playerData = ledger.getPlayerData()
+        guard let player = playerData.first(where: { return $0.player == player2 }) else { return XCTFail() }
+        XCTAssertTrue(player.money < 1500)
+    }
+    
+    func test_game_move_playerAlreadyMoved() {
+        let player1 = try! Player(name: "Bob")
+        let player2 = try! Player(name: "Steve")
+        let players = [player1, player2]
+        let locations = GameLedger.testDefaultLocations()
+        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 1)])
+        
+        try! ledger.startGame(value: 1500)
+        _ = try! ledger.moveCurrentPlayer()
+        XCTAssertThrowsError(try ledger.moveCurrentPlayer())
+    }
+    
+    // MARK: - Actions tests
+    
+    func test_game_actions_canPurchase() {
+        let player1 = try! Player(name: "Bob")
+        let player2 = try! Player(name: "Steve")
+        let players = [player1, player2]
+        let locations = GameLedger.testDefaultLocations()
+        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 1)])
+        
+        try! ledger.startGame(value: 1500)
+        _ = try! ledger.moveCurrentPlayer()
+        let actions = try! ledger.actions(for: locations.first!, player: player1)
+        
+        XCTAssertEqual(1, actions.count)
+        if case .canPurchase = actions.first! {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("Invalid action, should allow purchase")
+        }
+    }
+    
+    func test_game_actions_canUpgrade() {
+        let player1 = try! Player(name: "Bob")
+        let player2 = try! Player(name: "Steve")
+        let players = [player1, player2]
+        let locations = GameLedger.testDefaultLocations()
+        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 1)])
+        
+        try! ledger.startGame(value: 1500)
+        let (_, location, _) = try! ledger.moveCurrentPlayer()
+        try! ledger.purchase(player: player1, location: location)
+        let actions = try! ledger.actions(for: location, player: player1)
+        
+        XCTAssertEqual(1, actions.count)
+        if case .canUpgrade = actions.first! {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("Invalid action, should allow upgrade")
+        }
+    }
+    
+    func test_game_actions_none() {
+        let player1 = try! Player(name: "Bob")
+        let player2 = try! Player(name: "Steve")
+        let players = [player1, player2]
+        let locations = GameLedger.testDefaultLocations()
+        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 1)])
+        
+        try! ledger.startGame(value: 1500)
+        let (_, location, _) = try! ledger.moveCurrentPlayer()
+        try! ledger.purchase(player: player1, location: location)
+        let actions = try! ledger.actions(for: location, player: player2)
+        
+        XCTAssertEqual(1, actions.count)
+        if case .none = actions.first! {
+            XCTAssertTrue(true)
+        } else {
+            XCTFail("Invalid action, should allow no actions")
+        }
+    }
+    
+    func test_game_actions_with_invalid_player() {
+        let player1 = try! Player(name: "Bob")
+        let player2 = try! Player(name: "Steve")
+        let player3 = try! Player(name: "Not playing")
+        let players = [player1, player2]
+        let locations = GameLedger.testDefaultLocations()
+        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 1)])
+        
+        try! ledger.startGame(value: 1500)
+        let (_, location, _) = try! ledger.moveCurrentPlayer()
+        try! ledger.purchase(player: player1, location: location)
+        XCTAssertThrowsError(try ledger.actions(for: location, player: player3))
+    }
+    
+    func test_game_actions_with_invalid_location() {
+        let player1 = try! Player(name: "Bob")
+        let player2 = try! Player(name: "Steve")
+        let players = [player1, player2]
+        let locations = GameLedger.testDefaultLocations()
+        var ledger = GameLedger(players: players, locations: locations, dice: [Dice(numberOfSides: 1)])
+        
+        try! ledger.startGame(value: 1500)
+        let (_, location, _) = try! ledger.moveCurrentPlayer()
+        try! ledger.purchase(player: player1, location: location)
+        
+        let invalidLocation = Location.warehouse(name: "Invalid location", purchasePrice: 50, rent: 10)
+        XCTAssertThrowsError(try ledger.actions(for: invalidLocation, player: player1))
     }
 }
 

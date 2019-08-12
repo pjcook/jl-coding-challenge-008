@@ -38,6 +38,7 @@ class CodableTests: XCTestCase {
         try! ledger.playerReceiveFromBank(player: player1, location: goLocation)
         try! ledger.upgrade(player: player1, location: retailLocation)
         try! ledger.playerLandedAtLocation(player: player2, location: retailLocation)
+        _ = try! ledger.moveCurrentPlayer()
         
         let data = try! JSONEncoder().encode(ledger)
         XCTAssertNotNil(data)

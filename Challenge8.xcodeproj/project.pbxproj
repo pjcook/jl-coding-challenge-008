@@ -13,6 +13,8 @@
 		D54E41F822F30575005A1684 /* RetailTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E41F722F30575005A1684 /* RetailTypeTests.swift */; };
 		D54E41FA22F30F65005A1684 /* GameLedgerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E41F922F30F65005A1684 /* GameLedgerTests.swift */; };
 		D54E41FC22F31A98005A1684 /* CodableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D54E41FB22F31A98005A1684 /* CodableTests.swift */; };
+		D5873CD52300059500C0281E /* Monopoly.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5873CD42300059500C0281E /* Monopoly.swift */; };
+		D5873CD823000AC900C0281E /* String+Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5873CD723000AC900C0281E /* String+Localizable.swift */; };
 		D5BAD0F922F9CA57002F9623 /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BAD0F822F9CA57002F9623 /* Dice.swift */; };
 		D5BAD0FB22F9CADD002F9623 /* DiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BAD0FA22F9CADD002F9623 /* DiceTests.swift */; };
 		D5BE76D722CF90DE00C7F61C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BE76D622CF90DE00C7F61C /* AppDelegate.swift */; };
@@ -90,6 +92,8 @@
 		D54E41F722F30575005A1684 /* RetailTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetailTypeTests.swift; sourceTree = "<group>"; };
 		D54E41F922F30F65005A1684 /* GameLedgerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLedgerTests.swift; sourceTree = "<group>"; };
 		D54E41FB22F31A98005A1684 /* CodableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableTests.swift; sourceTree = "<group>"; };
+		D5873CD42300059500C0281E /* Monopoly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Monopoly.swift; sourceTree = "<group>"; };
+		D5873CD723000AC900C0281E /* String+Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Localizable.swift"; sourceTree = "<group>"; };
 		D5BAD0F822F9CA57002F9623 /* Dice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
 		D5BAD0FA22F9CADD002F9623 /* DiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceTests.swift; sourceTree = "<group>"; };
 		D5BE76D322CF90DE00C7F61C /* Challenge8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Challenge8.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,6 +161,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D5873CD32300058400C0281E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D5873CD42300059500C0281E /* Monopoly.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		D5873CD623000AB900C0281E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D5873CD723000AC900C0281E /* String+Localizable.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		D5BE76CA22CF90DE00C7F61C = {
 			isa = PBXGroup;
 			children = (
@@ -185,6 +205,8 @@
 		D5BE76D522CF90DE00C7F61C /* Challenge8 */ = {
 			isa = PBXGroup;
 			children = (
+				D5873CD623000AB900C0281E /* Extensions */,
+				D5873CD32300058400C0281E /* Model */,
 				D5BE76D622CF90DE00C7F61C /* AppDelegate.swift */,
 				D5BE76D822CF90DE00C7F61C /* ViewController.swift */,
 				D5BE76DA22CF90DE00C7F61C /* Main.storyboard */,
@@ -446,8 +468,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D5873CD52300059500C0281E /* Monopoly.swift in Sources */,
 				D5BE76D922CF90DE00C7F61C /* ViewController.swift in Sources */,
 				D5BE76D722CF90DE00C7F61C /* AppDelegate.swift in Sources */,
+				D5873CD823000AC900C0281E /* String+Localizable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
